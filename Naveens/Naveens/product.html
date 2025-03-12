@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naveen's Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f4f8;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navbar Styles */
+        #overlay {
+            width: 100%;
+            height: 100%;
+            color: rgb(18, 15, 15);
+            overflow-x: hidden;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2a9833;
+            color: white;
+            transition: background 0.5s ease-in-out, transform 0.5s ease-in-out;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Change background when scrolling */
+        .scrolled {
+            background: #1a7522 !important;
+        }
+
+        /* Hide Navbar */
+        .hidden {
+            transform: translateY(-100%);
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        #links {
+            width: 400px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .link {
+            cursor: pointer;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.3s ease-in;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        .link:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        /* Mobile Navigation */
+        #navpage {
+            width: 100%;
+            height: 100vh;
+            background-color: #2a9833;
+            position: fixed;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-100%);
+            transition: 0.3s ease-in-out;
+        }
+
+        #navpage.active {
+            transform: translateY(0);
+        }
+
+        #mobilelinks {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #mobilelinks a {
+            display: inline-block;
+            margin: 15px 0;
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        #mobilelinks a:hover {
+            letter-spacing: 2px;
+        }
+
+        #close {
+            font-size: 28px;
+            color: white;
+            position: absolute;
+            right: 30px;
+            top: 30px;
+            cursor: pointer;
+        }
+
+        #hemberger {
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Product Cards */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 120px 0 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+            animation-play-state: paused;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        .product-card:nth-child(5) { animation-delay: 0.5s; }
+        .product-card:nth-child(6) { animation-delay: 0.6s; }
+        .product-card:nth-child(7) { animation-delay: 0.7s; }
+        .product-card:nth-child(8) { animation-delay: 0.8s; }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card h2 {
+            color: #2a9833;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-card p {
+            color: #666;
+            font-size: 1rem;
+            min-height: 80px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #2a9833;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: background 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #1eb42b;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #38a169;
+            color: #fff;
+            padding: 45px 25px 20px;
+            margin-top: 40px;
+        }
+
+        .footer .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            text-align: left;
+            gap: 20px;
+        }
+
+        .footer .tagline, 
+        .footer .contact, 
+        .footer .social {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 20px;
+        }
+
+        .footer h2 {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer h3 {
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .footer .social a {
+            color: #fff;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .footer .social a:hover {
+            color: #f0f4f8;
+            letter-spacing: 1px;
+        }
+
+        .footer hr {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .footer .rights {
+            text-align: center;
+            font-size: 0.9rem;
+            padding-top: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #links {
+                display: none;
+            }
+
+            #hemberger {
+                display: block;
+            }
+
+            .product-grid {
+                grid-template-columns: 1fr;
+                margin-top: 100px;
+            }
+
+            .footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .product-card p {
+                min-height: auto;
+            }
+        }
+
+        @media (min-width: 769px) {
+            #navpage {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Mobile Navigation Menu -->
+    <div id="navpage">
+        <div id="close"><i class="ri-close-line"></i></div>
+        <div id="mobilelinks">
+            <a class="link" href="/">Home</a>
+            <a class="link" href="/career.html">Career</a>
+            <a class="link" href="/product.html">Product</a>
+            <a class="link" href="/contact.html">Contact Us</a>
+        </div>
+    </div>
+
+    <div id="overlay">
+        <!-- Navbar -->
+        <nav id="navbar">
+            <div class="logo">
+                <img src="/images/naveensLogo.png" alt="Naveen's Logo">
+            </div>
+            <span id="hemberger"><i class="ri-menu-2-line"></i></span>
+            <div id="links">
+                <a class="link" href="/">Home</a>
+                <a class="link" href="/career.html">Career</a>
+                <a class="link" href="/product.html">Product</a>
+                <a class="link" href="/contact.html">Contact Us</a>
+            </div>
+        </nav>
+
+        <!-- Product Grid -->
+        <div class="container">
+            <div class="product-grid">
+                <!-- Accounts System 1 -->
+                <div class="product-card">
+                    <h2>Accounting Software</h2>
+                    <p>Say goodbye to spreadsheets and manual calculations. Our accounting software helps you streamline
+                        bookkeeping, manage cash flow, and keep track of every transaction with ease.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- Accounts System 2 -->
+                <div class="product-card">
+                    <h2>Advanced Accounting</h2>
+                    <p>Automate your financial processes and gain real-time insights into your business. Our software
+                        ensures accurate bookkeeping, secure transactions, and seamless tax compliance—all at your
+                        fingertips.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- Database Backup System -->
+                <div class="product-card">
+                    <h2>SQL OneDrive Backup</h2>
+                    <p>Protect Your Data with Smart SQL OneDrive Backup! Never lose critical data again with automated
+                        OneDrive storage, real-time replication, and military-grade encryption. Secure, scalable, and
+                        stress-free.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- SMS System -->
+                <div class="product-card">
+                    <h2>SMS System</h2>
+                    <p>Stay connected with your customers effortlessly. Our SMS system provides reliable, fast, and
+                        scalable messaging solutions for notifications, marketing, and more.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- Credit Management System -->
+                <div class="product-card">
+                    <h2>Credit Management</h2>
+                    <p>Simplify credit tracking and risk management. Our system helps you monitor credit lines, assess
+                        customer reliability, and optimize financial decisions with ease.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- Inventory Management System -->
+                <div class="product-card">
+                    <h2>Inventory Management</h2>
+                    <p>Take control of your stock with real-time updates. Our inventory system ensures accurate
+                        tracking, reduces waste, and streamlines supply chain operations.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- Human Resource Management System -->
+                <div class="product-card">
+                    <h2>HR Management</h2>
+                    <p>No more payroll headaches or attendance discrepancies! Our all-in-one HRMS ensures accurate
+                        salary processing, real-time attendance tracking, and smooth workforce management.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+
+                <!-- Rent Management System -->
+                <div class="product-card">
+                    <h2>Rent Management</h2>
+                    <p>Effortlessly manage rental properties and payments. Our system automates rent collection, tracks
+                        leases, and provides insights to maximize your revenue.</p>
+                    <a href="#" class="cta-button">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="tagline">
+                    <h2>naveens</h2>
+                    <p>"Loginware an industry-leading technology company at the forefront of delivering sophisticated
+                        and digitally transformative solutions for the manufacturing sector."</p>
+                </div>
+                <div class="contact">
+                    <h3>Contact Us</h3>
+                    <p>Email: support@yourcompany.com</p>
+                    <p>Phone: +91 98765 43210</p>
+                    <p>Address: Dehradun, India</p>
+                </div>
+
+                <div class="social">
+                    <h3>Pages</h3>
+                    <p><a href="/">HOME</a></p>
+                    <p><a href="/career.html">CAREER</a></p>
+                    <p><a href="/product.html">PRODUCT</a></p>
+                    <p><a href="/contact.html">CONTACT US</a></p>
+                </div>
+
+                <div class="social">
+                    <h3>Follow Us</h3>
+                    <p><a href="#">Facebook</a></p>
+                    <p><a href="#">Twitter</a></p>
+                    <p><a href="#">LinkedIn</a></p>
+                    <p><a href="#">Instagram</a></p>
+                </div>
+            </div>
+            <hr>
+            <div class="rights">
+                <p>© 2021 Naveen's. All Rights Reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu functionality
+        document.getElementById('hemberger').addEventListener('click', function() {
+            document.getElementById('navpage').classList.add('active');
+        });
+
+        document.getElementById('close').addEventListener('click', function() {
+            document.getElementById('navpage').classList.remove('active');
+        });
+
+        // Navbar scroll effect
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Add background color when scrolling down
+            if (scrollTop > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            // Hide navbar when scrolling down, show when scrolling up
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                navbar.classList.add('hidden');
+            } else {
+                navbar.classList.remove('hidden');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+
+        // Smooth scroll for CTA buttons
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Trigger animations on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.product-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+
+</html>
